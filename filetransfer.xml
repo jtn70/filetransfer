@@ -1,0 +1,17 @@
+<filetransfer>
+	<log>true</log>
+	<emailserver>smtp.sarpsborg.com</emailserver>
+	<email>administrator@sarpsborg.com</email>
+	<application>
+		<name>ws_701195</name>
+		<from>\\web106.sarpsborg.com\DokumentLager_Robot\0105_701195</from>
+		<to>\\fil301\scanning$\kurs\WS701195</to>
+		<archive>\\bpcli301.sarpsborg.com\temp\archive</archive>
+	</application>
+	<application>
+		<name>ws_701195_i</name>
+		<from>\\web106.sarpsborg.com\DokumentLager_Robot\0105_701195_i</from>
+		<to>\\fil301\scanning$\kurs\WS701195_i</to>
+		<archive>\\bpcli301.sarpsborg.com\temp\archive</archive>
+	</application>
+</filetransfer>

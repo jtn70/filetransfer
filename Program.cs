@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Xml;
 using System.Diagnostics;
-
 using System.Threading.Tasks;
+
 
 namespace filetransfer
 {
@@ -35,6 +34,9 @@ namespace filetransfer
                     System.Environment.Exit(1);
                 }
             }
+
+            FileTransfer ft = new FileTransfer(args[0]);
+            
         }
 
         static void Usage()
@@ -42,9 +44,11 @@ namespace filetransfer
             System.Console.WriteLine("\n\nUsage: filetransfer <xmlfile>");
             System.Console.WriteLine("\nThe xml file must use the following structure and format:");
             System.Console.WriteLine("<filetransfer>");
+            System.Console.WriteLine("   <log>none|error|info|console</log>");
+            System.Console.WriteLine("   <emailserver>a.b.c:25</emailserver>");
+            System.Console.WriteLine("   <email>a@b.c</email>");
             System.Console.WriteLine("   <application>");
             System.Console.WriteLine("      <name>name of the transferjob</name>");
-            System.Console.WriteLine("      <log>true|false</log>");
             System.Console.WriteLine("      <from>file area to transfer file(s) from</from>");
             System.Console.WriteLine("      <to>file area to transfer file(s) to</to>");
             System.Console.WriteLine("   </application>");
