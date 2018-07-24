@@ -26,25 +26,9 @@ import core.stdc.stdlib;
 import std.conv;
 import std.string;
 import std.json;
+import std.process;
 
-struct job
-{
-    string jobname;
-    string source;
-    string destination;
-}
-
-struct settings 
-{
-    string log;
-    string emailserver;
-    string emailport;
-    string emailfrom;
-    job[] jobelement;
-}
-
-settings appsettings;
-
+JSONValue settings;
  
 void main(string[] args)
 {
@@ -61,7 +45,7 @@ void main(string[] args)
     }
     else if (!args[1].exists)
     {
-        writeln("ERROR: There is no XML file named: ", args[1]);
+        writeln("ERROR: There is no JSON file named: ", args[1]);
         exit (1);
     }
     else
@@ -98,5 +82,54 @@ void showHelp()
 
 void readSettingsFile(string file)
 {
-  
+    try
+    {
+        string settingsString = readText(file);
+        settings = parseJSON(settingsString);
+        if (settings["log"].str != "none" || settings["log"].str != "info" || settings["log"].str != "error" || settings["log"].str != "console")
+        {
+            writeln(`FATAL ERROR: The value for log in invalid, must be ["none"|"info"|"log"|"console"]`);
+            exit (1);
+        }
+    }
+    catch (Exception e)
+    {
+        writeln("FATAL ERROR: Could not read or parse settings file.");
+        exit (1);
+    }
+}
+
+void writeLog(string messagetype, string message)
+{
+    switch (settings["log"].str)
+    {
+        case "none":
+            // No logging, just break out = quit.
+            break;
+        case "info":
+            // Log everything:
+            version (Windows)
+            {
+
+            }
+            version (linux)
+            {
+                writeln("FATAL ERROR: OS not supported.");
+                exit (1);
+            }
+            version (OSX)
+            {
+                writeln("FATAL ERROR: OS not supported.");
+                exit (1);
+            }
+            break;
+        case "error":
+            break;
+        case "console":
+            break;
+        default:
+            // This should never ever be reached!!!
+            writeln("FATAL ERROR: Invalid log type");
+            exit (1);
+    }
 }
