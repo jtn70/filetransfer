@@ -90,7 +90,7 @@ void showHelp()
     writeln(`    {`);
     writeln(`      ...`);
     writeln(`    }`);
-    writeln(`  ],`);
+    writeln(`  ]`);
     writeln(`}`);
     writeln("\nThe copy job will exit if no source files exist. The log wil be written to");
     writeln("to the eventviewer on windows or the standard log on OS X/Linux.\n");

@@ -1,0 +1,15 @@
+{
+    "log": "[none|info|error|console]",
+    "email": {
+        "server": "[servername]",
+        "port": "[port]",
+        "from": "[from]"
+    },
+    "jobs": [
+        {
+            "name": "[name]",
+            "source": "[souce]",
+            "destination": "[destination]"
+        }
+    ]
+}
