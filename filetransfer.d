@@ -24,9 +24,8 @@ import std.file;
 import std.path;
 import core.stdc.stdlib;
 import std.conv;
-import std.xml;
 import std.string;
-import dxml.dom;
+import std.json;
 
 struct job
 {
@@ -73,30 +72,31 @@ void main(string[] args)
 
 void showHelp()
 {
-    writeln("Usage: filetransfer <XMLFILE>");
-    writeln("\nThe XML file must adhere to the structure reproduced here:");
-    writeln("<filetransfer>");
-    writeln("   <log>none|info|error|console</log>");
-    writeln("   <emailserver>smtp.company.com</emailserver>");
-    writeln("   <emailport>25</emailport>");
-    writeln("   <emailfrom>filetransfer@company.com</emailfrom>");
-    writeln("   <job>");
-    writeln("       <jobname>jobname</jobname>");
-    writeln("       <source>filepath (and wildcard) to copy from</source>");
-    writeln("       <destination>filepath to copy to</destination>");
-    writeln("   </job>");
-    writeln("   <job>...</job>");
-    writeln("   ...");
-    writeln("</filetransfer>");
+    writeln("Usage: filetransfer <JSONFILE>");
+    writeln("\nThe JSON file must adhere to the structure reproduced here:");
+    writeln(`{`);
+    writeln(`  "log": "[none|info|error|console]",`);
+    writeln(`  "email": {`);
+    writeln(`    "server": "[servername]",`);
+    writeln(`    "port": "[port]",`);
+    writeln(`    "from": "[from]"`);
+    writeln(`  },`);
+    writeln(`  "jobs": [`);
+    writeln(`    {`);
+    writeln(`      "name": "[name]",`);
+    writeln(`      "source": "[filepath to copy from (wildcards supported)]",`);
+    writeln(`      "destination": "[filepath to copy to]"`);
+    writeln(`    },`);
+    writeln(`    {`);
+    writeln(`      ...`);
+    writeln(`    }`);
+    writeln(`  ],`);
+    writeln(`}`);
     writeln("\nThe copy job will exit if no source files exist. The log wil be written to");
-    writeln("to the eventviewer on windows andcthe standard log on OS X/Linux.\n");
+    writeln("to the eventviewer on windows or the standard log on OS X/Linux.\n");
 }
 
 void readSettingsFile(string file)
 {
-    auto sxml = readText(file);
-
-    auto dom = parseDOM(sxml);
-
-    writeln(dom.children["filetransfer"]);
+  
 }
