@@ -27,11 +27,22 @@ import std.conv;
 import std.string;
 import std.json;
 import std.process;
+import std.algorithm;
 
 JSONValue settings;
  
 void main(string[] args)
 {
+    version (linux)
+    {
+        writeln("FATAL ERROR: OS not supported.");
+        exit (1);
+    }
+    version (OSX)
+    {
+        writeln("FATAL ERROR: OS not supported.");
+        exit (1);
+    }
     if (args.length != 2)
     {
         writeln("ERROR: Argument missing.\n");
@@ -52,6 +63,8 @@ void main(string[] args)
     {
         readSettingsFile(args[1]);
     }
+
+    jobLoop();
 }
 
 void showHelp()
@@ -86,7 +99,8 @@ void readSettingsFile(string file)
     {
         string settingsString = readText(file);
         settings = parseJSON(settingsString);
-        if (settings["log"].str != "none" || settings["log"].str != "info" || settings["log"].str != "error" || settings["log"].str != "console")
+
+        if (!(settings["log"].str == "none" || settings["log"].str == "info" || settings["log"].str == "error" || settings["log"].str == "console"))
         {
             writeln(`FATAL ERROR: The value for log in invalid, must be ["none"|"info"|"log"|"console"]`);
             exit (1);
@@ -103,6 +117,13 @@ void writeLog(string messagetype, string message)
 {
     switch (settings["log"].str)
     {
+        case "preinit":
+            version (Windows)
+            {
+                writeLogEventviewer(messagetype, message);
+            }
+            writeLogConsole(message);
+            break;
         case "none":
             // No logging, just break out = quit.
             break;
@@ -110,26 +131,76 @@ void writeLog(string messagetype, string message)
             // Log everything:
             version (Windows)
             {
-
-            }
-            version (linux)
-            {
-                writeln("FATAL ERROR: OS not supported.");
-                exit (1);
-            }
-            version (OSX)
-            {
-                writeln("FATAL ERROR: OS not supported.");
-                exit (1);
+                // Means print everything
+                writeLogEventviewer(messagetype, message);
             }
             break;
         case "error":
+            if (messagetype == "error")
+            {
+                version (Windows)
+                {
+                    writeLogEventviewer(messagetype, message);
+                }
+            }
             break;
         case "console":
+            writeLogConsole(message);
             break;
         default:
             // This should never ever be reached!!!
-            writeln("FATAL ERROR: Invalid log type");
-            exit (1);
+        version (Windows)
+        {
+            writeLogEventviewer("ERROR", "FATAL ERROR: Invalid log type");
+        }
+        writeLogConsole("FATAL ERROR: Invalid log type");        
+        exit (1);
     }
+}
+
+void writeLogEventviewer(string messagetype, string message)
+{
+    string cmdline;
+    cmdline = "EventCreate /t ";
+    if (messagetype == "info")
+    {
+        cmdline = cmdline ~ "INFORMATION";
+    }
+    else if (messagetype == "error")
+    {
+        cmdline = cmdline ~ "ERROR";
+    }
+    
+    cmdline = cmdline ~ ` /T APPLICATION /SO "filetransfer.exe" /ID 1 /D"` ~ message ~ `"`;
+
+
+    auto cmd = executeShell(cmdline);
+}
+
+void writeLogConsole(string message)
+{
+    writeln(message);
+}
+
+void jobLoop()
+{
+    // Loop through Jobs settings["jobs"];
+   JSONValue jobs = (settings["jobs"]);
+   //writeln(jobs.array.length);
+   
+   foreach (job; jobs.array.map!(a => a.object))
+   {
+      
+      if (dirEntries(dirName(job["source"].str), baseName(job["source"].str),SpanMode.shallow).count > 0 && job["destination"].str.exists)
+      {
+          writeln ("Exists");
+      }
+      
+      
+   }
+}
+
+void transferFile(string frompath, string topath)
+{
+
 }
